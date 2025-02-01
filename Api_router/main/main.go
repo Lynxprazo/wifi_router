@@ -19,7 +19,7 @@ handlers.AllowedHeaders([]string("content-type", "Authorization")),
 
 }
 
-fatal.log(http.ListenAndServe(":8080",Cors))
+log.fatal(http.ListenAndServe(":8080",Cors))
 
 
 }
