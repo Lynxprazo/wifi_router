@@ -1,4 +1,4 @@
-package main
+package Login
 
 import "net/http"
 type Login struct{

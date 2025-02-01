@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"database/sql"
@@ -6,17 +6,17 @@ import (
 
 	_ "github.com/go-sql-driver/mysql" // Import MySQL driver
 )
-
-func main() {
-
-	db, err := sql.Open("mysql", "root@tcp(0.0.0.0:3306)/Router_Db")
+var DB *sql.DB
+func InitDB() {
+     var err error
+	DB, err = sql.Open("mysql", "root@tcp(0.0.0.0:3306)/Router_Db")
 	if err != nil {
 		log.Fatal("Failed to connect to the database:", err)
 	}
-	defer db.Close()
+	defer DB.Close()
 
 	// Ping the database to verify the connection
-	if err := db.Ping(); err != nil {
+	if err := DB.Ping(); err != nil {
 		log.Fatal("Error occurred during database connection:", err)
 	}
 
@@ -32,7 +32,7 @@ func main() {
 		PRIMARY KEY(user_id)
 	);`
 
-	_, err = db.Exec(registrationQuery)
+	_, err = DB.Exec(registrationQuery)
 	if err != nil {
 		log.Fatal("Failed to create table user_reg:", err)
 	}
@@ -48,7 +48,7 @@ func main() {
 		FOREIGN KEY (user_id2) REFERENCES user_reg(user_id)
 	);`
 
-	_, err = db.Exec(loginQuery)
+	_, err = DB.Exec(loginQuery)
 	if err != nil {
 		log.Fatal("Failed to create table user_log:", err)
 	}
