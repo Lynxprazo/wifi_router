@@ -24,6 +24,7 @@ func main() {
 
 	// Register the HTTP handler for user registration.
 	r.HandleFunc("/register", Registration.RegisterHandler).Methods("POST")
+	r.HandleFunc("/login", Login.LoginRegister).Methods("POST")
 
 	// Configure CORS middleware.
 	cors := handlers.CORS(
