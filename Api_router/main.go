@@ -1,7 +1,7 @@
 package main
 
 import (
-	 "Api_router/AuthentLog"  //Import the Login package
+	 "Api_router/AuthentLog"  // Import the Login package
 	"Api_router/AuthentReg"   // Import the Registration package
 	"Api_router/databaseconn" // Import the database package
 	"log"
