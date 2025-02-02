@@ -1,10 +1,13 @@
 package Registration
 
 import (
-	"Api_router"
+	"Api_router/databaseconn"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Reg struct {
@@ -31,8 +34,14 @@ func RegisterHandler(w http.ResponseWriter , r*http.Request) {
 			return
 		} 
 		query :="INSERT INTO TABLE user_reg (Username, Password Phnone_Number) value(?,?,?)"
+		hashpwrd, ererr := bcrypt.GenerateFromPassword([]byte(Reg_user.Password), bcrypt.DefaultCost)
 
-		_,err = database.DB.Exec(query,Reg_user.Username,Reg_user.Password,Reg_user.Phone_Number)
+		if ererr != nil{
+			fmt.Println("Failed to Hashpassword",err)
+			return
+		}
+
+		_,err = database.DB.Exec(query,Reg_user.Username,hashpwrd,Reg_user.Phone_Number)
 		if err != nil{
 			http.Error(w , "Failed to Insert data to the database", http.StatusBadRequest)
 			return
