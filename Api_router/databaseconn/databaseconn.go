@@ -3,17 +3,21 @@ package database
 import (
 	"database/sql"
 	"log"
+	"time"
 
-	_ "github.com/go-sql-driver/mysql" // Import MySQL driver
+	_ "github.com/go-sql-driver/mysql" 
 )
 var DB *sql.DB
 func InitDB() {
      var err error
-	DB, err = sql.Open("mysql", "root@tcp(0.0.0.0:3306)/Router_Db")
+	DB, err = sql.Open("mysql", "root@tcp(0.0.0.0:3306)/Router_Db?parseTime=true")
 	if err != nil {
 		log.Fatal("Failed to connect to the database:", err)
 	}
-	defer DB.Close()
+    // configuration of new connection pool
+	DB.SetMaxOpenConns(25)
+	DB.SetMaxIdleConns(25)
+	DB.SetConnMaxLifetime( 5 *time.Minute)
 
 	// Ping the database to verify the connection
 	if err := DB.Ping(); err != nil {

@@ -11,7 +11,7 @@ import (
 )
 
 type Reg struct {
-	Username     string `json:"username"`
+	Username     string `json:"Username"`
 	Password     string `json:"Password"`
 	Phone_Number string `json:"Phone_Number"`
 }
@@ -47,7 +47,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Insert the user into the database
-	query := "INSERT INTO user_reg (Username, Password, Phone_Number) VALUES (?, ?, ?)"
+	query := "INSERT INTO user_reg (Username , Password, Phone_Number) VALUES (?, ?, ?)"
 	_, err = database.DB.Exec(query, Reg_user.Username, string(hashedPassword), Reg_user.Phone_Number)
 	if err != nil {
 		http.Error(w, "Failed to insert data into the database: "+err.Error(), http.StatusInternalServerError)
