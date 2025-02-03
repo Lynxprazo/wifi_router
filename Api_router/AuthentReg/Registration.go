@@ -4,7 +4,7 @@ import (
 	"Api_router/databaseconn"
 	"database/sql"
 	"encoding/json"
-	"fmt"
+	
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
@@ -15,37 +15,47 @@ type Reg struct {
 	Password     string `json:"Password"`
 	Phone_Number string `json:"Phone_Number"`
 }
- var DB*sql.DB
-func RegisterHandler(w http.ResponseWriter , r*http.Request) {
 
-		if r.Method != http.MethodPost{
-           http.Error(w, "Error occur method used not recommended",http.StatusMethodNotAllowed)
-		   return
-		}
-		var Reg_user Reg
+var DB *sql.DB
 
-		err := json.NewDecoder(r.Body).Decode(&Reg_user)
+func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	// Check if the request method is POST
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 
-		if err !=nil{
-			http.Error(w,"Failed to Decoded json body" +err.Error(),http.StatusInternalServerError)
-			return
-		}else if Reg_user.Username == "" || Reg_user.Password == "" ||Reg_user.Phone_Number ==  ""{
-			http.Error(w,"User should fill all the text box", http.StatusBadRequest)
-			return
-		} 
-		query :="INSERT INTO TABLE user_reg (Username, Password Phnone_Number) value(?,?,?)"
-		hashpwrd, ererr := bcrypt.GenerateFromPassword([]byte(Reg_user.Password), bcrypt.DefaultCost)
+	// Decode the JSON body into the Reg struct
+	var Reg_user Reg
+	err := json.NewDecoder(r.Body).Decode(&Reg_user)
+	if err != nil {
+		http.Error(w, "Failed to decode JSON body: "+err.Error(), http.StatusBadRequest)
+		return
+	}
 
-		if ererr != nil{
-			fmt.Println("Failed to Hashpassword",err)
-			return
-		}
+	// Validate that all fields are filled
+	if Reg_user.Username == "" || Reg_user.Password == "" || Reg_user.Phone_Number == "" {
+		http.Error(w, "All fields are required", http.StatusBadRequest)
+		return
+	}
 
-		_,err = database.DB.Exec(query,Reg_user.Username,hashpwrd,Reg_user.Phone_Number)
-		if err != nil{
-			http.Error(w , "Failed to Insert data to the database", http.StatusBadRequest)
-			return
+	// Hash the password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(Reg_user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		http.Error(w, "Failed to hash password: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-		}
+	// Insert the user into the database
+	query := "INSERT INTO user_reg (Username, Password, Phone_Number) VALUES (?, ?, ?)"
+	_, err = database.DB.Exec(query, Reg_user.Username, string(hashedPassword), Reg_user.Phone_Number)
+	if err != nil {
+		http.Error(w, "Failed to insert data into the database: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
+	// Send a success response
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "User registered successfully"})
 }

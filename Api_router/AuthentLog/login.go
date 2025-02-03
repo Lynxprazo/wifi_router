@@ -27,7 +27,7 @@ func LoginRegister(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Print("Failed to Decode the json file", err)
 	}
-	query := "SELECT Password FROM user_log WHERE username = ? "
+	query := "SELECT Password FROM user_reg WHERE username = ? "
 	var hashpassword string
 	err = database.DB.QueryRow(query, userlog.Username).Scan(&hashpassword)
 
