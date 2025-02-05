@@ -1,8 +1,9 @@
 package main
 
 import (
-	"Api_router/AuthentLog"  // Import the Login package
-	"Api_router/AuthentReg"  // Import the Registration package
+	"Api_router/AuthentLog" // Import the Login package
+	"Api_router/AuthentReg" // Import the Registration package
+	"Api_router/_handlers"
 	"Api_router/databaseconn" // Import the database package
 	"log"
 	"net/http"
@@ -24,7 +25,7 @@ func main() {
 
 	// Register the HTTP handler for user registration and login
 	r.HandleFunc("/register", Registration.RegisterHandler).Methods("POST")
-	r.HandleFunc("/login", Login.LoginRegister).Methods("POST")
+	r.HandleFunc("/login", _handlers.LoginRegister).Methods("POST")
 
 	// Configure CORS middleware
 	cors := handlers.CORS(
