@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Api_router/AuthentLog" // Import the Login package
+	// "Api_router/AuthentLog" // Import the Login package
 	"Api_router/AuthentReg" // Import the Registration package
 	"Api_router/_handlers"
 	"Api_router/databaseconn" // Import the database package
@@ -15,10 +15,10 @@ import (
 func main() {
 	// Initialize the database connection
 	database.InitDB()
-
 	// Pass the database connection to the Registration and Login packages
 	Registration.DB = database.DB
-	Login.DB = database.DB
+	_handlers.DB = database.DB
+	
 
 	// Create a new Gorilla Mux router
 	r := mux.NewRouter()
