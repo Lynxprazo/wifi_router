@@ -1,10 +1,8 @@
 package main
 
 import (
-	// "Api_router/AuthentLog" // Import the Login package
-	"Api_router/AuthentReg" // Import the Registration package
-	"Api_router/_handlers"
-	"Api_router/databaseconn" // Import the database package
+	"Api_router/_handlers"             // Import the _handler Package
+	database "Api_router/databaseconn" // Import the database package
 	"log"
 	"net/http"
 
@@ -16,15 +14,13 @@ func main() {
 	// Initialize the database connection
 	database.InitDB()
 	// Pass the database connection to the Registration and Login packages
-	Registration.DB = database.DB
 	_handlers.DB = database.DB
-	
 
 	// Create a new Gorilla Mux router
 	r := mux.NewRouter()
 
 	// Register the HTTP handler for user registration and login
-	r.HandleFunc("/register", Registration.RegisterHandler).Methods("POST")
+	r.HandleFunc("/register", _handlers.RegisterHandler).Methods("POST")
 	r.HandleFunc("/login", _handlers.LoginRegister).Methods("POST")
 
 	// Configure CORS middleware
