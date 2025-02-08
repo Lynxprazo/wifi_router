@@ -32,7 +32,9 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode JSON body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-
+//check if user already  exist 
+ exist:= database. DB.QueryRow("select  Phone_Number FROM user_reg" , Reg_user.Phone_Number)
+if exist == nil{
 	// Validate that all fields are filled
 	if Reg_user.Username == "" || Reg_user.Password == "" || Reg_user.Phone_Number == "" {
 		http.Error(w, "All fields are required", http.StatusBadRequest)
@@ -58,4 +60,9 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "User registered successfully"})
+}}else{
+   w.WriteHeader (http.StatusBadRequest)
+   w.Header ().Set("Content-Type", "application/json ")
+json. NewEncoder(w).Encode. (map[string]string {"message"}
+
 }
