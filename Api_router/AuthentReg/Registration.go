@@ -4,7 +4,8 @@ import (
 	"Api_router/databaseconn"
 	"database/sql"
 	"encoding/json"
-	
+	"log"
+
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
@@ -33,8 +34,22 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 //check if user already  exist 
- exist:= database. DB.QueryRow("select  Phone_Number FROM user_reg" , Reg_user.Phone_Number)
-if exist == nil{
+ var existPhone_Number string
+
+   checkquery := "SELECT Phone_Number FROM user_reg WHERE Phone_Number = ? "
+
+   err = database.DB.QueryRow(checkquery, Reg_user.Phone_Number).Scan(&existPhone_Number)
+   if err == nil{
+    w.WriteHeader(http.StatusConflict)
+	json.NewEncoder(w).Encode(map[string]string{"error":"Phone number already exist"})
+	return
+   }else if err != sql.ErrNoRows{
+	w.WriteHeader(http.StatusInternalServerError)
+	json.NewEncoder(w).Encode(map[string]string{"error":"Failed to connect to the database: "+ err.Error()})
+	return
+   }
+ 
+
 	// Validate that all fields are filled
 	if Reg_user.Username == "" || Reg_user.Password == "" || Reg_user.Phone_Number == "" {
 		http.Error(w, "All fields are required", http.StatusBadRequest)
@@ -60,9 +75,4 @@ if exist == nil{
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "User registered successfully"})
-}}else{
-   w.WriteHeader (http.StatusBadRequest)
-   w.Header ().Set("Content-Type", "application/json ")
-json. NewEncoder(w).Encode. (map[string]string {"message"}
-
 }
