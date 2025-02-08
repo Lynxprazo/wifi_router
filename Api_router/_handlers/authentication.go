@@ -1,16 +1,16 @@
 package _handlers
 
-
 import (
 	"Api_router/databaseconn"
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"golang.org/x/crypto/bcrypt"
+	"net/http"
 )
 
 var DB *sql.DB
+
 type Reg struct {
 	Username     string `json:"Username"`
 	Password     string `json:"Password"`
@@ -53,10 +53,6 @@ func LoginRegister(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Successfuly login"))
 }
 
-
-
-
-
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	// Check if the request method is POST
 	if r.Method != http.MethodPost {
@@ -71,22 +67,21 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to decode JSON body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-//check if user already  exist 
- var existPhone_Number string
+	//check if user already  exist
+	var existPhone_Number string
 
-   checkquery := "SELECT Phone_Number FROM user_reg WHERE Phone_Number = ? "
+	checkquery := "SELECT Phone_Number FROM user_reg WHERE Phone_Number = ? "
 
-   err = database.DB.QueryRow(checkquery, Reg_user.Phone_Number).Scan(&existPhone_Number)
-   if err == nil{
-    w.WriteHeader(http.StatusConflict)
-	json.NewEncoder(w).Encode(map[string]string{"error":"Phone number already exist"})
-	return
-   }else if err != sql.ErrNoRows{
-	w.WriteHeader(http.StatusInternalServerError)
-	json.NewEncoder(w).Encode(map[string]string{"error":"Failed to connect to the database: "+ err.Error()})
-	return
-   }
- 
+	err = database.DB.QueryRow(checkquery, Reg_user.Phone_Number).Scan(&existPhone_Number)
+	if err == nil {
+		w.WriteHeader(http.StatusConflict)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Phone number already exist"})
+		return
+	} else if err != sql.ErrNoRows {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to connect to the database: " + err.Error()})
+		return
+	}
 
 	// Validate that all fields are filled
 	if Reg_user.Username == "" || Reg_user.Password == "" || Reg_user.Phone_Number == "" {
