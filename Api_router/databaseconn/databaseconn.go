@@ -19,7 +19,8 @@ func InitDB() {
 	DB.SetMaxIdleConns(25)
 	DB.SetConnMaxLifetime( 5 *time.Minute)
 
-	// Ping the database to verify the connection
+	// Ping the database to
+	//  verify the connection
 	if err := DB.Ping(); err != nil {
 		log.Fatal("Error occurred during database connection:", err)
 	}
